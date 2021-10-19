@@ -1,4 +1,4 @@
-// This package contains fs.FS wrapper(s).
+// Package fsutil provides fs.FS wrapper(s).
 package fsutil
 
 import (
@@ -24,9 +24,8 @@ func (f *fixedModTimeFS) Open(name string) (fs.File, error) {
 
 	if dirfile, ok := file.(fs.ReadDirFile); ok {
 		return &fixedModTimeDirFile{ReadDirFile: dirfile, fixedModTime: f.fixedModTime}, err
-	} else {
-		return &fixedModTimeFile{File: file, fixedModTime: f.fixedModTime}, err
 	}
+	return &fixedModTimeFile{File: file, fixedModTime: f.fixedModTime}, err
 }
 
 type fixedModTimeFile struct {
