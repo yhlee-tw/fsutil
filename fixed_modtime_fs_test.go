@@ -1,6 +1,8 @@
 package fsutil
 
 import (
+	"fmt"
+	"io/fs"
 	"os"
 	"testing"
 	"time"
@@ -50,4 +52,22 @@ func TestEmbedFS(t *testing.T) {
 	if actual != mt {
 		t.Errorf("ModTime: expected %v got %v", mt, actual)
 	}
+}
+
+func ExampleFixedModTimeFS() {
+	// embed.FS returns zero ModTime
+	var fsys fs.FS = fsutiltest.TestEmbeddedFS
+	f, _ := fsys.Open("test_data.txt")
+	fi, _ := f.Stat()
+	fmt.Printf("embed.FS: %v\n", fi.ModTime())
+
+	// FixedModTimeFS returns fixed ModTime
+	mt := time.Date(2021, time.October, 10, 23, 0, 0, 0, time.UTC)
+	fsys = FixedModTimeFS(fsys, mt)
+	f, _ = fsys.Open("test_data.txt")
+	fi, _ = f.Stat()
+	fmt.Printf("FixedModTimeFS: %v\n", fi.ModTime())
+	// Output:
+	// embed.FS: 0001-01-01 00:00:00 +0000 UTC
+	// FixedModTimeFS: 2021-10-10 23:00:00 +0000 UTC
 }
