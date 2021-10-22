@@ -64,7 +64,7 @@ func TestModTime(t *testing.T) {
 		name     string
 		fsys     fs.FS
 		filename string
-		open_ok  bool
+		openable bool
 		seekable bool
 	}{
 		{"mockFS", &mockFS{}, "test_data.txt", true, false},
@@ -81,7 +81,7 @@ func TestModTime(t *testing.T) {
 			fsys := FixedModTimeFS(tt.fsys, mt)
 
 			f, err := fsys.Open(tt.filename)
-			if tt.open_ok {
+			if tt.openable {
 				if err != nil {
 					t.Fatalf("Open: unexpected error %v", err)
 				}
@@ -109,11 +109,11 @@ func TestModTime(t *testing.T) {
 func TestSeeker(t *testing.T) {
 	mt := time.Date(2021, time.October, 10, 23, 0, 0, 0, time.UTC)
 	called := false
-	mock_seek := func(offset int64, whence int) (int64, error) {
+	mockseek := func(offset int64, whence int) (int64, error) {
 		called = true
 		return 0, nil
 	}
-	fsys := FixedModTimeFS(&mockFS{mock_seek}, mt)
+	fsys := FixedModTimeFS(&mockFS{mockseek}, mt)
 
 	f, err := fsys.Open("test_data.txt")
 	if err != nil {
@@ -131,7 +131,7 @@ func TestSeeker(t *testing.T) {
 		t.Errorf("Seek: expected return 0 got %v", actual)
 	}
 	if !called {
-		t.Errorf("Seek: mock_seek was called but was not")
+		t.Errorf("Seek: expected mockseek should be called but was not")
 	}
 }
 
