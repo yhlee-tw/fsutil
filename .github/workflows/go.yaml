@@ -45,8 +45,3 @@ jobs:
         go test -race -v \
           -coverpkg=./... -coverprofile=coverage.out -covermode=atomic ./...
         go tool cover -html=coverage.out -o coverage.html
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage.html
-        path: coverage.html
